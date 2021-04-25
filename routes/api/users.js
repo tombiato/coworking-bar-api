@@ -1,20 +1,20 @@
 const express = require('express');
 
-// Models
-const Bar = require('../../models/Bar');
+// Model
+const User = require('../../models/User');
 
 const router = express.Router();
 
 /**
- * @route   GET api/bars
- * @desc    Get all bars
+ * @route   GET /api/users
+ * @desc    Get all users
  * @access  Public
  */
 router.get('/', async (req, res) => {
 	try {
-		const bars = await Bar.find();
+		const users = await User.find();
 
-		res.status(200).send({ bars });
+		res.status(200).send({ users });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error...');
@@ -22,20 +22,20 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * @route   GET api/bars/:id
- * @desc    Get single bars
+ * @route   GET /api/users/:id
+ * @desc    Get single users
  * @access  Public
  */
 router.get('/:id', async (req, res) => {
 	try {
-		const bar = await Bar.findById(req.params.id);
+		const user = await User.findById(req.params.id);
 
-		if (!bar)
+		if (!user)
 			return res
 				.status(404)
-				.send({ msg: `Bar with id: ${req.params.id} not found` });
+				.send({ msg: `User with id: ${req.params.id} not found` });
 
-		res.status(200).send({ bar });
+		res.status(200).send({ user });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error...');
@@ -43,21 +43,22 @@ router.get('/:id', async (req, res) => {
 });
 
 /**
- * @route   POST api/bars
- * @desc    Create new bar
+ * @route   POST /api/users
+ * @desc    Create new user
  * @access  Public
  */
 router.post('/', async (req, res) => {
 	try {
-		const newBar = new Bar({
+		const user = new User({
 			name: req.body.name,
-			description: req.body.description,
+			email: req.body.email,
+			password: req.body.password,
 			address: req.body.address,
 		});
 
-		await newBar.save();
+		await user.save();
 
-		res.status(200).send({ newBar });
+		res.status(200).send({ user });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error...');
@@ -65,28 +66,28 @@ router.post('/', async (req, res) => {
 });
 
 /**
- * @route   PUT api/bars/:id
- * @desc    Update single bar
+ * @route   PUT /api/users/:id
+ * @desc    Update single user
  * @access  Private
  */
 router.put('/:id', async (req, res) => {
 	try {
-		const bar = await Bar.findById(req.params.id);
+		const user = User.findById(req.params.id);
 
-		if (!bar)
+		if (!user)
 			return res
 				.status(404)
-				.send({ msg: `Bar with id: ${req.params.id} not found` });
+				.send({ msg: `User with id: ${req.params.id} not found` });
 
 		const fieldToUpdate = {};
 
 		if (req.body.name) fieldToUpdate.name = req.body.name;
-		if (req.body.description) fieldToUpdate.description = req.body.description;
+		if (req.body.email) fieldToUpdate.email = req.body.email;
 		if (req.body.address) fieldToUpdate.address = req.body.address;
 
-		await bar.update(fieldToUpdate);
+		await user.update(fieldToUpdate);
 
-		res.status(200).send({ bar });
+		res.status(200).send({ user });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error...');
@@ -94,22 +95,20 @@ router.put('/:id', async (req, res) => {
 });
 
 /**
- * @route   DELETE api/bars/:id
- * @desc    Delete single bar
+ * @route   DELETE /api/users/:id
+ * @desc    Delete single user
  * @access  Private
  */
 router.delete('/:id', async (req, res) => {
 	try {
-		const bar = await Bar.findById(req.params.id);
+		const user = await User.findById(req.params.id);
 
-		if (!bar)
+		if (!user)
 			return res
 				.status(404)
-				.send({ msg: `Bar with id: ${req.params.id} not found` });
+				.send({ msg: `User with id: ${req.params.id} not found` });
 
-		await Bar.findByIdAndRemove(req.params.id);
-
-		res.status(203).send({ msg: 'Ressource deleted' });
+		await User.findByIdAndRemove(req.params.id);
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error...');
